@@ -11,11 +11,11 @@ public interface Music {
 	
 	public void setVolume(float volume);
 	
-	public void isPlaying();
+	public boolean isPlaying();
 	
-	public void isStopped();
+	public boolean isStopped();
 	
-	public void isLooping();
+	public boolean isLooping();
 	
 	public void dispose();
 	

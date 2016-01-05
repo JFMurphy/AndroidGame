@@ -19,12 +19,12 @@ public interface Graphics {
 	public void drawImage(Image image, int x, int y, int srcX, int srcY, int srcWidth, int srcHeight);
 
 	public void drawImage(Image image, int x, int y);
-	
+
 	void drawString(String text, int x, int y, Paint paint);
 
 	public int getWidth();
 
 	public int getHeight();
 
-	public void drawARGB(int i, int j, int k, int l);
+	public void drawARGB(int a, int r, int g, int b);
 }

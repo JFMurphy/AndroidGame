@@ -34,24 +34,24 @@ public class AndroidGraphics implements Graphics {
 
 	@Override
 	public Image newImage(String fileName, ImageFormat format) {
-		
+
 		Config config = null;
-		if(format == ImageFormat.RGB565)
-			config =Config.RGB_565;
-		else if(format == ImageFormat.ARGB4444)
+		if (format == ImageFormat.RGB565)
+			config = Config.RGB_565;
+		else if (format == ImageFormat.ARGB4444)
 			config = Config.ARGB_4444;
 		else
 			config = Config.ARGB_8888;
-		
+
 		Options options = new Options();
 		options.inPreferredConfig = config;
-		
+
 		InputStream in = null;
 		Bitmap bitmap = null;
 		try {
 			in = assets.open(fileName);
 			bitmap = BitmapFactory.decodeStream(in, null, options);
-			if(bitmap == null)
+			if (bitmap == null)
 				throw new RuntimeException("Couldn't load bitmap from asset '" + fileName + "'");
 		} catch (IOException e) {
 			throw new RuntimeException("Couldn't load bitmap from asset '" + fileName + "'");
@@ -63,17 +63,16 @@ public class AndroidGraphics implements Graphics {
 				}
 			}
 		}
-		
+
 		if (bitmap.getConfig() == Config.RGB_565)
 			format = ImageFormat.RGB565;
 		else if (bitmap.getConfig() == Config.ARGB_4444)
 			format = ImageFormat.ARGB4444;
 		else
 			format = ImageFormat.ARGB8888;
-		
+
 		return new AndroidImage(bitmap, format);
 	}
-	
 
 	@Override
 	public void clearScreen(int color) {
@@ -94,40 +93,59 @@ public class AndroidGraphics implements Graphics {
 	}
 
 	@Override
-	public void drawImage(Image image, int x, int y, int srcX, int srcY, int srcWidth, int srcHeight) {
-		// TODO Auto-generated method stub
-
-	}
-	
-	@Override
-	public void drawImage(Image image, int x, int y) {
-		// TODO Auto-generated method stub
-		
+	public void drawARGB(int a, int r, int g, int b) {
+		paint.setStyle(Style.FILL);
+		canvas.drawARGB(a, r, g, b);
 	}
 
 	@Override
 	public void drawString(String text, int x, int y, Paint paint) {
-		// TODO Auto-generated method stub
-		
+		canvas.drawText(text, x, y, paint);
+	}
+
+	@Override
+	public void drawImage(Image image, int x, int y, int srcX, int srcY, int srcWidth, int srcHeight) {
+		srcRect.left = srcX;
+		srcRect.top = srcY;
+		srcRect.right = srcX + srcWidth;
+		srcRect.bottom = srcY + srcHeight;
+
+		dstRect.left = x;
+		dstRect.top = y;
+		dstRect.right = x + srcWidth;
+		dstRect.bottom = y + srcHeight;
+
+		canvas.drawBitmap(((AndroidImage) image).bitmap, srcRect, dstRect, null);
+	}
+
+	@Override
+	public void drawImage(Image image, int x, int y) {
+		canvas.drawBitmap(((AndroidImage) image).bitmap, x, y, null);
+	}
+
+	public void drawScaledImage(Image Image, int x, int y, int width, int height, int srcX, int srcY, int srcWidth,
+			int srcHeight) {
+		srcRect.left = srcX;
+		srcRect.top = srcY;
+		srcRect.right = srcX + srcWidth;
+		srcRect.bottom = srcY + srcHeight;
+
+		dstRect.left = x;
+		dstRect.top = y;
+		dstRect.right = x + width;
+		dstRect.bottom = y + height;
+
+		canvas.drawBitmap(((AndroidImage) Image).bitmap, srcRect, dstRect, null);
 	}
 
 	@Override
 	public int getWidth() {
-		// TODO Auto-generated method stub
-		return 0;
+		return frameBuffer.getWidth();
 	}
 
 	@Override
 	public int getHeight() {
-		// TODO Auto-generated method stub
-		return 0;
+		return frameBuffer.getHeight();
 	}
-
-	@Override
-	public void drawARGB(int i, int j, int k, int l) {
-		
-	}
-
-	public
 
 }

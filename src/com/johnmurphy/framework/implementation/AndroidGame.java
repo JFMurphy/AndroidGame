@@ -17,6 +17,7 @@ import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.view.Window;
 import android.view.WindowManager;
+import android.util.DisplayMetrics;
 
 public abstract class AndroidGame extends Activity implements Game {
 
@@ -26,7 +27,7 @@ public abstract class AndroidGame extends Activity implements Game {
 	Input input;
 	FileIO fileIO;
 	Screen screen;
-	WakeLock wakelock;
+	WakeLock wakeLock;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -39,9 +40,12 @@ public abstract class AndroidGame extends Activity implements Game {
 		int frameBufferWidth = isPortrait ? 800 : 1280;
 		int frameBufferHeight = isPortrait ? 1280 : 800;
 		Bitmap frameBuffer = Bitmap.createBitmap(frameBufferWidth, frameBufferHeight, Config.RGB_565);
-
-		float scaleX = (float) frameBufferWidth / getWindowManager().getDefaultDisplay().getWidth();
-		float scaleY = (float) frameBufferHeight / getWindowManager().getDefaultDisplay().getHeight();
+		
+		DisplayMetrics metrics = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(metrics);
+		
+		float scaleX = (float) frameBufferWidth / metrics.widthPixels;
+		float scaleY = (float) frameBufferHeight / metrics.heightPixels;
 
 		renderView = new AndroidFastRenderView(this, frameBuffer);
 		graphics = new AndroidGraphics(getAssets(), frameBuffer);
@@ -52,7 +56,7 @@ public abstract class AndroidGame extends Activity implements Game {
 		setContentView(renderView);
 
 		PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
-		wakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK, "MyGame");
+		wakeLock = powerManager.newWakeLock(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, "MyGame");
 	}
 
 	@Override
@@ -67,7 +71,7 @@ public abstract class AndroidGame extends Activity implements Game {
 	protected void onPause() {
 		super.onPause();
 		wakeLock.release();
-		renderView();
+		renderView.pause();
 		screen.pause();
 
 		if (isFinishing())
