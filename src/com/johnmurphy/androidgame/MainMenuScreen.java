@@ -7,8 +7,6 @@ import com.johnmurphy.framework.Graphics;
 import com.johnmurphy.framework.Input.TouchEvent;
 import com.johnmurphy.framework.Screen;
 
-import android.text.method.Touch;
-
 public class MainMenuScreen extends Screen {
 	
 	public MainMenuScreen (Game game) {
